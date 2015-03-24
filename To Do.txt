@@ -1,0 +1,4 @@
+-Create flat terrain.
+-Create a controllable character (moving, looking, jumping).
+-Create a box that can be activated (activation test).
+-Create boxes that can be picked up and dropped (inventory test).

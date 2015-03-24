@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Wraithguard;
 
 namespace Wraithguard
@@ -7,12 +8,12 @@ namespace Wraithguard
 	{
 		private void OnStart()
 		{
-			CreateCamera().AddComponent<FlyingCameraComponent>();
-			
-			GameObject.CreatePrimitive(PrimitiveType.Cube);
+			ChangeGameState(new MainMenuState());
 		}
 		
-		private GameObject CreateCamera()
+		// Utilities
+		// =========
+		public GameObject CreateCamera()
 		{
 			GameObject camera = new GameObject("camera");
 			camera.AddComponent<Camera>();
@@ -20,8 +21,38 @@ namespace Wraithguard
 			return camera;
 		}
 		
-		// Internal stuff.
+		// Internal Stuff
+		// ==============
 		public static Global instance;
+		
+		public Action onNextSceneLoaded;
+		
+		public void ChangeGameState(GameState gameState)
+		{
+			nextGameState = gameState;
+			shouldChangeGameState = true;
+		}
+		public void ChangeGameStateImmediately(GameState gameState)
+		{
+			if(currentGameState != null)
+			{
+				currentGameState.OnStop();
+			}
+			
+			currentGameState = gameState;
+			
+			if(currentGameState != null)
+			{
+				currentGameState.OnStart();
+			}
+			
+			nextGameState = null;
+			shouldChangeGameState = false;
+		}
+		
+		private GameState currentGameState;
+		private GameState nextGameState;
+		private bool shouldChangeGameState;
 		
 		private void Start()
 		{
@@ -40,6 +71,38 @@ namespace Wraithguard
 			}
 			
 			OnStart();
+		}
+		private void OnDestroy()
+		{
+			ChangeGameStateImmediately(null); // Stop the current game state.
+		}
+		private void Update()
+		{
+			if(shouldChangeGameState)
+			{
+				ChangeGameStateImmediately(nextGameState);
+			}
+			
+			if(currentGameState != null)
+			{
+				currentGameState.OnUpdate();
+			}
+		}
+		private void OnGUI()
+		{
+			if(currentGameState != null)
+			{
+				currentGameState.OnGUI();
+			}
+		}
+		private void OnLevelWasLoaded(int sceneIndex)
+		{
+			if(onNextSceneLoaded != null)
+			{
+				onNextSceneLoaded();
+				
+				onNextSceneLoaded = null;
+			}
 		}
 	}
 }
