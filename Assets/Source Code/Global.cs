@@ -11,14 +11,32 @@ namespace Wraithguard
 			ChangeGameState(new MainMenuState());
 		}
 		
-		// Utilities
-		// =========
+		public void ActivateObject(GameObject gameObject, GameObject activator)
+		{
+			gameObject.SendMessage("Activate", activator, SendMessageOptions.DontRequireReceiver);
+		}
+		public void DamageObject(GameObject gameObject, float damage)
+		{
+			Debug.Assert(damage >= 0);
+			
+			gameObject.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
+		}
+		
+		// GameObject Creation Functions
+		// =============================
 		public GameObject CreateCamera()
 		{
 			GameObject camera = new GameObject("camera");
 			camera.AddComponent<Camera>();
 			
 			return camera;
+		}
+		public GameObject CreateDirectionalLight()
+		{
+			GameObject directionalLight = new GameObject("directionalLight");
+			directionalLight.AddComponent<Light>().type = LightType.Directional;
+			
+			return directionalLight;
 		}
 		
 		// Internal Stuff

@@ -13,9 +13,12 @@ namespace Wraithguard
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
 			
-			Global.instance.CreateCamera().AddComponent<FlyingCameraComponent>();
+			LoadScene();
+			CreatePlayer();
 			
-			GameObject.CreatePrimitive(PrimitiveType.Cube);
+			camera = Global.instance.CreateCamera();
+			
+			player.GetComponent<PlayerComponent>().camera = camera;
 		}
 		public override void OnStop()
 		{
@@ -36,7 +39,40 @@ namespace Wraithguard
 			pauseMenu.OnGUI();
 		}
 		
+		private GameObject player;
+		private GameObject camera;
+		
 		private PauseMenu pauseMenu;
+		
+		private void CreateTerrain()
+		{
+			TerrainData terrainData = new TerrainData();
+			
+			Terrain.CreateTerrainGameObject(terrainData);
+		}
+		private void LoadScene()
+		{
+			Global.instance.CreateDirectionalLight().transform.eulerAngles = new Vector3(45, 45, 0);
+			
+			CreateTerrain();
+			
+			GameObject chest = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			chest.transform.position = new Vector3(5, 0.5f, 15);
+			chest.AddComponent<ContainerComponent>();
+		}
+		private void CreatePlayer()
+		{
+			player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			player.name = "player";
+			
+			Rigidbody rigidbody = player.AddComponent<Rigidbody>();
+			rigidbody.mass = 75;
+			rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			
+			player.AddComponent<PlayerComponent>();
+			
+			player.transform.position = new Vector3(10, 10, 3);
+		}
 		
 		private void TogglePauseMenu()
 		{

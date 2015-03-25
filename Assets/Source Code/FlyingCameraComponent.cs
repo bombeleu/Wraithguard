@@ -6,7 +6,7 @@ namespace Wraithguard
 	public class FlyingCameraComponent : MonoBehaviour
 	{
 		public float speed = 3;
-		public float maximumVerticalAngle = 90;
+		public float maxVerticalAngle = 90;
 		
 		private Vector3 eulerAngles;
 		
@@ -24,7 +24,7 @@ namespace Wraithguard
 		{
 			Vector2 deltaMouse = Mouse.deltaMouse;
 			
-			eulerAngles.x = Mathf.Clamp(eulerAngles.x - deltaMouse.y, -maximumVerticalAngle, maximumVerticalAngle);
+			eulerAngles.x = Mathf.Clamp(eulerAngles.x - deltaMouse.y, -maxVerticalAngle, maxVerticalAngle);
 			eulerAngles.y = Mathf.Repeat(eulerAngles.y + deltaMouse.x, 360);
 			
 			transform.eulerAngles = eulerAngles;
