@@ -31,6 +31,13 @@ namespace Wraithguard
 		}
 		private void Translate()
 		{
+			Vector3 velocity = GetMovementDirectionFromInput() * speed;
+			Vector3 translation = velocity * Time.deltaTime;
+			
+			transform.Translate(translation);
+		}
+		private Vector3 GetMovementDirectionFromInput()
+		{
 			Vector3 movementDirection = Vector3.zero;
 			
 			if(Input.GetKey(KeyCode.W))
@@ -63,12 +70,7 @@ namespace Wraithguard
 				movementDirection += Vector3.up;
 			}
 			
-			movementDirection.Normalize();
-			
-			Vector3 velocity = movementDirection * speed;
-			Vector3 translation = velocity * Time.deltaTime;
-			
-			transform.Translate(translation);
+			return movementDirection.normalized;
 		}
 	}
 }
