@@ -7,6 +7,16 @@ namespace Wraithguard
 		private Rigidbody rigidbody;
 		private float yAngle;
 		
+		public float height;
+		
+		public Inventory inventory
+		{
+			get
+			{
+				return GetComponent<InventoryComponent>().inventory;
+			}
+		}
+		
 		// Camera Stuff
 		// ============
 		public GameObject camera
@@ -21,7 +31,10 @@ namespace Wraithguard
 				cameraXAngle = 0;
 				
 				_camera.transform.parent = transform;
-				_camera.transform.localPosition = Vector3.zero;
+				
+				float cameraY = height * (Measures.averageHumanEyeHeightPercentage - 0.5f);
+				_camera.transform.localPosition = new Vector3(0, cameraY, 0);
+				
 				_camera.transform.localRotation = Quaternion.identity;
 			}
 		}
@@ -69,6 +82,17 @@ namespace Wraithguard
 				if(PhysicsUtilities.RaycastClosest(cameraRay, out raycastHit, maxActivationDistance))
 				{
 					Global.instance.ActivateObject(raycastHit.transform.gameObject, gameObject);
+				}
+			}
+			
+			if(Input.GetKeyDown(KeyCode.T))
+			{
+				const uint itemTypeID = 0;
+				
+				if(inventory.GetItemCount(itemTypeID) > 0)
+				{
+					inventory.RemoveItem(itemTypeID);
+					Object.CreateGameObject(itemTypeID, cameraRay.GetPoint(3));
 				}
 			}
 		}

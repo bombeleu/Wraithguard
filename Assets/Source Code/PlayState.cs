@@ -38,7 +38,7 @@ namespace Wraithguard
 			
 			pauseMenu.OnGUI();
 		}
-		
+				
 		private GameObject player;
 		private GameObject camera;
 		
@@ -58,20 +58,25 @@ namespace Wraithguard
 			
 			GameObject chest = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			chest.transform.position = new Vector3(5, 0.5f, 15);
-			chest.AddComponent<ContainerComponent>();
+			chest.AddComponent<InventoryComponent>();
 		}
-		private void CreatePlayer()
+		private void CreatePlayer(float playerHeight = Measures.averageMaleHumanHeight)
 		{
-			player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-			player.name = "player";
+			player = new GameObject("player");
+			
+			player.transform.position = new Vector3(10, 10, 3);
+			
+			CapsuleCollider collider = player.AddComponent<CapsuleCollider>();
+			collider.height = playerHeight;
+			collider.radius = 1.5f * Measures.footInMeters;
 			
 			Rigidbody rigidbody = player.AddComponent<Rigidbody>();
 			rigidbody.mass = 75;
 			rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			
-			player.AddComponent<PlayerComponent>();
+			player.AddComponent<PlayerComponent>().height = playerHeight;
 			
-			player.transform.position = new Vector3(10, 10, 3);
+			player.AddComponent<InventoryComponent>().inventory = new Inventory();
 		}
 		
 		private void TogglePauseMenu()

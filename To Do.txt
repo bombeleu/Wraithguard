@@ -1,6 +1,7 @@
 High Priority
 =============
--Get item transfer, dropping, and pickup working.
+-Add player inventory GUI.
+-Add item transfer GUI.
 
 Low Priority
 ============
