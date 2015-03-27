@@ -24,6 +24,8 @@ namespace Wraithguard
 		{
 			Cursor.visible = true;
 			Cursor.lockState = CursorLockMode.None;
+			
+			UnpauseWorld();
 		}
 		public override void OnUpdate()
 		{
@@ -81,13 +83,19 @@ namespace Wraithguard
 		{
 			Time.timeScale = 0;
 			
-			player.GetComponent<PlayerComponent>().enabled = false;
+			if(player != null)
+			{
+				player.GetComponent<PlayerComponent>().enabled = false;
+			}
 		}
 		private void UnpauseWorld()
 		{
 			Time.timeScale = 1;
 			
-			player.GetComponent<PlayerComponent>().enabled = true;
+			if(player != null)
+			{
+				player.GetComponent<PlayerComponent>().enabled = true;
+			}
 		}
 		
 		private void TogglePauseMenu()

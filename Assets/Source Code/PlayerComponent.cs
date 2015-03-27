@@ -66,6 +66,31 @@ namespace Wraithguard
 			}
 		}
 		
+		private const float groundedMargin = 0.1f;
+		private bool isGrounded
+		{
+			get
+			{
+				return Physics.Raycast(groundedTestRay, groundedTestRayLength);
+			}
+		}
+		private Ray groundedTestRay
+		{
+			get
+			{
+				return new Ray(transform.position, Vector3.down);
+			}
+		}
+		private float groundedTestRayLength
+		{
+			get
+			{
+				return (height / 2) + groundedMargin;
+			}
+		}
+		
+		private const float jumpImpulseMagnitude = 400;
+		
 		private void Start()
 		{
 			rigidbody = GetComponent<Rigidbody>();
@@ -95,8 +120,23 @@ namespace Wraithguard
 					Object.CreateGameObject(itemTypeID, cameraRay.GetPoint(3));
 				}
 			}
+			
+			if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
+			{
+				rigidbody.AddForce(Vector3.up * jumpImpulseMagnitude, ForceMode.Impulse);
+			}
 		}
 		private void FixedUpdate()
+		{
+			if(isGrounded)
+			{
+				Vector3 force = GetMovementDirectionFromInput() * 750;
+				
+				rigidbody.AddForce(force);
+			}
+		}
+		
+		private void ApplyLateralMovementForce()
 		{
 			Vector3 force = GetMovementDirectionFromInput() * 750;
 			
@@ -146,9 +186,7 @@ namespace Wraithguard
 		private void OnDrawGizmos()
 		{
 			DrawXZAxesGizmo();
-			
-			Gizmos.color = Color.white;
-			Gizmos.DrawRay(transform.position, GetMovementDirectionFromInput() * 2);
+			DrawGroundedTestGizmo();
 		}
 		private void DrawXZAxesGizmo()
 		{
@@ -159,6 +197,14 @@ namespace Wraithguard
 			
 			Gizmos.color = Color.blue;
 			Gizmos.DrawRay(transform.position, xzForward * axisLength);
+		}
+		private void DrawGroundedTestGizmo()
+		{
+			Ray ray = groundedTestRay;
+			ray.direction *= groundedTestRayLength;
+			
+			Gizmos.color = isGrounded ? Color.white : Color.black;
+			Gizmos.DrawRay(ray);
 		}
 	}
 }
