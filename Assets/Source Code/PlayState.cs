@@ -34,8 +34,6 @@ namespace Wraithguard
 		}
 		public override void OnGUI()
 		{
-			GUI.Label(new Rect(10, 10, 300, 25), "Press Escape to return to the main menu.");
-			
 			pauseMenu.OnGUI();
 		}
 				
@@ -79,10 +77,25 @@ namespace Wraithguard
 			player.AddComponent<InventoryComponent>().inventory = new Inventory();
 		}
 		
+		private void PauseWorld()
+		{
+			Time.timeScale = 0;
+			
+			player.GetComponent<PlayerComponent>().enabled = false;
+		}
+		private void UnpauseWorld()
+		{
+			Time.timeScale = 1;
+			
+			player.GetComponent<PlayerComponent>().enabled = true;
+		}
+		
 		private void TogglePauseMenu()
 		{
 			if(!pauseMenu.isVisible)
 			{
+				PauseWorld();
+				
 				pauseMenu.isVisible = true;
 				
 				Cursor.visible = true;
@@ -90,6 +103,8 @@ namespace Wraithguard
 			}
 			else
 			{
+				UnpauseWorld();
+				
 				pauseMenu.isVisible = false;
 				
 				Cursor.lockState = CursorLockMode.Locked;

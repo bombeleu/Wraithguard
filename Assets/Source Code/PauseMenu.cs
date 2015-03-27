@@ -11,12 +11,16 @@ namespace Wraithguard
 		{
 			this.onReturnToGame = onReturnToGame;
 			this.onQuitToMainMenu = onQuitToMainMenu;
+			
+			buttonLayout = new VerticalRectangleLayout(new Vector2(10, 10), 10);
+			buttonLayout.AddRectangle(buttonSize);
+			buttonLayout.AddRectangle(buttonSize);
 		}
 		public void OnGUI()
 		{
 			if(isVisible)
 			{
-				if(GUI.Button(new Rect(10, 50, 200, 50), "Return To Game"))
+				if(GUI.Button(buttonLayout.rectangles[0], "Return To Game"))
 				{
 					if(onReturnToGame != null)
 					{
@@ -24,7 +28,7 @@ namespace Wraithguard
 					}
 				}
 				
-				if(GUI.Button(new Rect(10, 110, 200, 50), "Quit To Main Menu"))
+				if(GUI.Button(buttonLayout.rectangles[1], "Quit To Main Menu"))
 				{
 					if(onQuitToMainMenu != null)
 					{
@@ -36,5 +40,9 @@ namespace Wraithguard
 		
 		private Action onReturnToGame;
 		private Action onQuitToMainMenu;
+		
+		private VerticalRectangleLayout buttonLayout;
+		
+		private readonly Vector2 buttonSize = new Vector2(200, 50);
 	}
 }

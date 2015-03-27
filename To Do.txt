@@ -2,8 +2,10 @@ High Priority
 =============
 -Add player inventory GUI.
 -Add item transfer GUI.
+-Add jumping.
+-Add a dialogue system.
 
 Low Priority
 ============
--Add jumping.
+-Add options screen to pause menu.
 -Add crosshair.

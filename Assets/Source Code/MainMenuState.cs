@@ -4,22 +4,31 @@ namespace Wraithguard
 {
 	public class MainMenuState : GameState
 	{
+		public MainMenuState()
+		{
+			buttonLayout = new VerticalRectangleLayout(new Vector2(20, 20), 10);
+			buttonLayout.AddRectangle(buttonSize);
+			buttonLayout.AddRectangle(buttonSize);
+		}
 		public override void OnStart()
 		{
 			Global.instance.CreateCamera();
 		}
 		public override void OnGUI()
 		{
-			if(GUI.Button(new Rect(10, 10, 200, 50), "Play"))
+			if(GUI.Button(buttonLayout.rectangles[0], "Play"))
 			{
 				Play();
 			}
 			
-			if(GUI.Button(new Rect(10, 70, 200, 50), "Quit"))
+			if(GUI.Button(buttonLayout.rectangles[1], "Quit"))
 			{
 				Application.Quit();
 			}
 		}
+		
+		private VerticalRectangleLayout buttonLayout;
+		private readonly Vector2 buttonSize = new Vector2(200, 50);
 		
 		private void Play()
 		{
