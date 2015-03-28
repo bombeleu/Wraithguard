@@ -4,6 +4,8 @@ namespace Wraithguard
 {
 	public class PlayerComponent : MonoBehaviour
 	{
+		GameObject sword;
+		
 		#region Camera Stuff
 		public GameObject camera
 		{
@@ -24,10 +26,11 @@ namespace Wraithguard
 				_camera.transform.localRotation = Quaternion.identity;
 			}
 		}
+		private GameObject _camera;
+		
 		public float maxVerticalAngle = 90;
 		public float maxActivationDistance = 2;
 		
-		private GameObject _camera;
 		private float cameraXAngle;
 		private Ray cameraRay
 		{
@@ -130,6 +133,19 @@ namespace Wraithguard
 			
 			if(Input.GetMouseButtonDown(0))
 			{
+				if(sword == null)
+				{
+					SlashSword();
+				}
+			}
+			
+			if(sword != null)
+			{
+				UpdateSword();
+			}
+			
+			if(Input.GetMouseButtonDown(1))
+			{
 				FireArrow();
 			}
 		}
@@ -188,6 +204,41 @@ namespace Wraithguard
 			camera.transform.localEulerAngles = new Vector3(cameraXAngle, 0, 0);
 		}
 		
+		private void SlashSword()
+		{
+			Debug.Assert(sword == null);
+			
+			const float swordLength = 1;
+			
+			GameObject actualSword = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+			actualSword.AddComponent<ActiveSwordComponent>();
+			
+			actualSword.transform.localScale = new Vector3(0.1f, swordLength / 2, 0.1f);
+			actualSword.GetComponent<CapsuleCollider>().isTrigger = true;
+			
+			actualSword.transform.position = new Vector3(0, swordLength / 2, 0);
+			
+			sword = new GameObject();
+			
+			actualSword.transform.parent = sword.transform;
+			
+			sword.transform.position = cameraRay.GetPoint(1);
+			sword.transform.eulerAngles = new Vector3(cameraXAngle, yAngle, 0);
+			sword.transform.parent = camera.transform;
+		}
+		private void UpdateSword()
+		{
+			Debug.Assert(sword != null);
+			
+			sword.transform.Rotate(Vector3.right * Time.deltaTime * 720);
+			
+			if(sword.transform.localEulerAngles.x >= 180)
+			{
+				Destroy(sword);
+				sword = null;
+			}
+		}
+		
 		private void FireArrow()
 		{
 			GameObject arrow = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -200,7 +251,7 @@ namespace Wraithguard
 			arrow.transform.eulerAngles = new Vector3(cameraXAngle + 90, yAngle, 0);
 			arrow.transform.localScale = new Vector3(0.1f, 0.3f, 0.1f);
 			
-			rigidbody.velocity = cameraRay.direction * 20;
+			rigidbody.velocity = cameraRay.direction * 40;
 		}
 		
 		// Debug Stuff

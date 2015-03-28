@@ -4,7 +4,6 @@ High Priority
 -Add item transfer GUI.
 -Add a dialogue system.
 -Add weapon switching.
--Add sword slashing.
 
 Low Priority
 ============
@@ -15,7 +14,3 @@ Low Priority
 
 Finished
 ========
--Add a texture to the terrain.
--Enlarge terrain.
--Add damage box.
--Add arrow shooting.

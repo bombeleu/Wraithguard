@@ -72,10 +72,6 @@ namespace Wraithguard
 			GameObject chest = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			chest.transform.position = new Vector3(5, 0.5f, 15);
 			chest.AddComponent<InventoryComponent>();
-			
-			GameObject damageBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			damageBox.transform.position = new Vector3(10, 0.5f, 15);
-			damageBox.AddComponent<DamageBoxComponent>();
 		}
 		private void CreatePlayer(float playerHeight = Measures.averageMaleHumanHeight)
 		{
