@@ -2,13 +2,20 @@ High Priority
 =============
 -Add player inventory GUI.
 -Add item transfer GUI.
-
 -Add a dialogue system.
+-Add weapon switching.
+-Add sword slashing.
 
 Low Priority
 ============
 -Add options screen to pause menu.
 -Add crosshair.
+-Generate interesting terrain.
+-Add water.
 
 Finished
 ========
+-Add a texture to the terrain.
+-Enlarge terrain.
+-Add damage box.
+-Add arrow shooting.

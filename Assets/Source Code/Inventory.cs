@@ -1,9 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Wraithguard
 {
-	public class Inventory
+	public class Inventory : IEnumerable
 	{
+		public uint slotCount
+		{
+			get
+			{
+				return (uint)slots.Count;
+			}
+		}
+		
 		public Inventory()
 		{
 			slots = new List<InventorySlot>();
@@ -76,6 +85,11 @@ namespace Wraithguard
 		public void Clear()
 		{
 			slots.Clear();
+		}
+		
+		public IEnumerator GetEnumerator()
+		{
+			return slots.GetEnumerator();
 		}
 		
 		private List<InventorySlot> slots;

@@ -6,16 +6,20 @@ namespace Wraithguard
 {
 	public class Global : MonoBehaviour
 	{
+		// Textures
+		// ========
+		public Texture2D grassAlbedoTexture;
+		
 		private void OnStart()
 		{
 			ChangeGameState(new MainMenuState());
 		}
 		
-		public void ActivateObject(GameObject gameObject, GameObject activator)
+		public static void ActivateObject(GameObject gameObject, GameObject activator)
 		{
 			gameObject.SendMessage("Activate", activator, SendMessageOptions.DontRequireReceiver);
 		}
-		public void DamageObject(GameObject gameObject, float damage)
+		public static void DamageObject(GameObject gameObject, float damage)
 		{
 			Debug.Assert(damage >= 0);
 			
@@ -24,14 +28,14 @@ namespace Wraithguard
 		
 		// GameObject Creation Functions
 		// =============================
-		public GameObject CreateCamera()
+		public static GameObject CreateCamera()
 		{
 			GameObject camera = new GameObject("camera");
 			camera.AddComponent<Camera>();
 			
 			return camera;
 		}
-		public GameObject CreateDirectionalLight()
+		public static GameObject CreateDirectionalLight()
 		{
 			GameObject directionalLight = new GameObject("directionalLight");
 			directionalLight.AddComponent<Light>().type = LightType.Directional;
@@ -41,7 +45,14 @@ namespace Wraithguard
 		
 		// Internal Stuff
 		// ==============
-		public static Global instance;
+		public static Global instance
+		{
+			get
+			{
+				return _instance;
+			}
+		}
+		private static Global _instance;
 		
 		public Action onNextSceneLoaded;
 		
@@ -74,9 +85,9 @@ namespace Wraithguard
 		
 		private void Start()
 		{
-			if(instance == null)
+			if(_instance == null)
 			{
-				instance = this;
+				_instance = this;
 				
 				DontDestroyOnLoad(gameObject);
 			}

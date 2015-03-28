@@ -12,7 +12,7 @@ namespace Wraithguard
 		}
 		public override void OnStart()
 		{
-			Global.instance.CreateCamera();
+			Global.CreateCamera();
 		}
 		public override void OnGUI()
 		{

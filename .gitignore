@@ -1,6 +1,7 @@
 Library/
 Temp/
 Standard Assets*
+Textures/
 
 *.sln
 *.csproj

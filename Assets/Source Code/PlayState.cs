@@ -16,9 +16,11 @@ namespace Wraithguard
 			LoadScene();
 			CreatePlayer();
 			
-			camera = Global.instance.CreateCamera();
+			camera = Global.CreateCamera();
 			
 			player.GetComponent<PlayerComponent>().camera = camera;
+			
+			inventoryWindow = new InventoryWindow(player.GetComponent<InventoryComponent>().inventory);
 		}
 		public override void OnStop()
 		{
@@ -33,32 +35,47 @@ namespace Wraithguard
 			{
 				TogglePauseMenu();
 			}
+			
+			if(!pauseMenu.isVisible && Input.GetKeyDown(KeyCode.B))
+			{
+				ToggleInventoryWindow();
+			}
 		}
 		public override void OnGUI()
 		{
 			pauseMenu.OnGUI();
+			inventoryWindow.OnGUI();
 		}
 				
 		private GameObject player;
 		private GameObject camera;
 		
-		private PauseMenu pauseMenu;
-		
 		private void CreateTerrain()
 		{
 			TerrainData terrainData = new TerrainData();
+			
+			terrainData.size = new Vector3(1024, 1024, 1024);
+			
+			SplatPrototype grassSplat = new SplatPrototype();
+			grassSplat.texture = Global.instance.grassAlbedoTexture;
+			
+			terrainData.splatPrototypes = new SplatPrototype[]{grassSplat};
 			
 			Terrain.CreateTerrainGameObject(terrainData);
 		}
 		private void LoadScene()
 		{
-			Global.instance.CreateDirectionalLight().transform.eulerAngles = new Vector3(45, 45, 0);
+			Global.CreateDirectionalLight().transform.eulerAngles = new Vector3(45, 45, 0);
 			
 			CreateTerrain();
 			
 			GameObject chest = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			chest.transform.position = new Vector3(5, 0.5f, 15);
 			chest.AddComponent<InventoryComponent>();
+			
+			GameObject damageBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			damageBox.transform.position = new Vector3(10, 0.5f, 15);
+			damageBox.AddComponent<DamageBoxComponent>();
 		}
 		private void CreatePlayer(float playerHeight = Measures.averageMaleHumanHeight)
 		{
@@ -97,28 +114,6 @@ namespace Wraithguard
 				player.GetComponent<PlayerComponent>().enabled = true;
 			}
 		}
-		
-		private void TogglePauseMenu()
-		{
-			if(!pauseMenu.isVisible)
-			{
-				PauseWorld();
-				
-				pauseMenu.isVisible = true;
-				
-				Cursor.visible = true;
-				Cursor.lockState = CursorLockMode.None;
-			}
-			else
-			{
-				UnpauseWorld();
-				
-				pauseMenu.isVisible = false;
-				
-				Cursor.lockState = CursorLockMode.Locked;
-				Cursor.visible = false;
-			}
-		}
 		private void ReturnToMainMenu()
 		{
 			Global.instance.ChangeGameStateImmediately(null);
@@ -130,5 +125,60 @@ namespace Wraithguard
 			
 			Application.LoadLevel(0);
 		}
+		
+		#region GUI
+		private PauseMenu pauseMenu;
+		private InventoryWindow inventoryWindow;
+		
+		private void OnEnterGUIScreen()
+		{
+			Cursor.visible = true;
+			Cursor.lockState = CursorLockMode.None;
+		}
+		private void OnExitGUIScreen()
+		{
+			Cursor.lockState = CursorLockMode.Locked;
+			Cursor.visible = false;
+		}
+		
+		private void TogglePauseMenu()
+		{
+			if(!pauseMenu.isVisible)
+			{
+				PauseWorld();
+				
+				pauseMenu.isVisible = true;
+				
+				OnEnterGUIScreen();
+			}
+			else
+			{
+				UnpauseWorld();
+				
+				pauseMenu.isVisible = false;
+				
+				OnExitGUIScreen();
+			}
+		}
+		private void ToggleInventoryWindow()
+		{
+			if(!inventoryWindow.isVisible)
+			{
+				PauseWorld();
+				
+				inventoryWindow.isVisible = true;
+				
+				OnEnterGUIScreen();
+			}
+			else
+			{
+				UnpauseWorld();
+				
+				inventoryWindow.isVisible = false;
+				
+				OnExitGUIScreen();
+			}
+		}
+		#endregion
 	}
 }

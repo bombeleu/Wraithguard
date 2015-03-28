@@ -4,21 +4,7 @@ namespace Wraithguard
 {
 	public class PlayerComponent : MonoBehaviour
 	{
-		private Rigidbody rigidbody;
-		private float yAngle;
-		
-		public float height;
-		
-		public Inventory inventory
-		{
-			get
-			{
-				return GetComponent<InventoryComponent>().inventory;
-			}
-		}
-		
-		// Camera Stuff
-		// ============
+		#region Camera Stuff
 		public GameObject camera
 		{
 			get
@@ -50,22 +36,9 @@ namespace Wraithguard
 				return new Ray(camera.transform.position, camera.transform.forward);
 			}
 		}
+		#endregion
 		
-		private Vector3 xzForward
-		{
-			get
-			{
-				return Math.Reject(transform.forward, Vector3.up);
-			}
-		}
-		private Vector3 xzRight
-		{
-			get
-			{
-				return Math.Reject(transform.right, Vector3.up);
-			}
-		}
-		
+		#region Jumping Stuff
 		private const float groundedMargin = 0.1f;
 		private bool isGrounded
 		{
@@ -90,6 +63,35 @@ namespace Wraithguard
 		}
 		
 		private const float jumpImpulseMagnitude = 400;
+		#endregion
+		
+		private Rigidbody rigidbody;
+		private float yAngle;
+		
+		public float height;
+		
+		private Vector3 xzForward
+		{
+			get
+			{
+				return Math.Reject(transform.forward, Vector3.up);
+			}
+		}
+		private Vector3 xzRight
+		{
+			get
+			{
+				return Math.Reject(transform.right, Vector3.up);
+			}
+		}
+		
+		public Inventory inventory
+		{
+			get
+			{
+				return GetComponent<InventoryComponent>().inventory;
+			}
+		}
 		
 		private void Start()
 		{
@@ -106,7 +108,7 @@ namespace Wraithguard
 				
 				if(PhysicsUtilities.RaycastClosest(cameraRay, out raycastHit, maxActivationDistance))
 				{
-					Global.instance.ActivateObject(raycastHit.transform.gameObject, gameObject);
+					Global.ActivateObject(raycastHit.transform.gameObject, gameObject);
 				}
 			}
 			
@@ -124,6 +126,11 @@ namespace Wraithguard
 			if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
 			{
 				rigidbody.AddForce(Vector3.up * jumpImpulseMagnitude, ForceMode.Impulse);
+			}
+			
+			if(Input.GetMouseButtonDown(0))
+			{
+				FireArrow();
 			}
 		}
 		private void FixedUpdate()
@@ -181,11 +188,27 @@ namespace Wraithguard
 			camera.transform.localEulerAngles = new Vector3(cameraXAngle, 0, 0);
 		}
 		
+		private void FireArrow()
+		{
+			GameObject arrow = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			arrow.AddComponent<ArrowComponent>();
+			
+			Rigidbody rigidbody = arrow.AddComponent<Rigidbody>();
+			rigidbody.mass = 1;
+			
+			arrow.transform.position = cameraRay.GetPoint(1);
+			arrow.transform.eulerAngles = new Vector3(cameraXAngle + 90, yAngle, 0);
+			arrow.transform.localScale = new Vector3(0.1f, 0.3f, 0.1f);
+			
+			rigidbody.velocity = cameraRay.direction * 20;
+		}
+		
 		// Debug Stuff
 		// ===========
 		private void OnDrawGizmos()
 		{
 			DrawXZAxesGizmo();
+			DrawCameraRayGizmo();
 			DrawGroundedTestGizmo();
 		}
 		private void DrawXZAxesGizmo()
@@ -197,6 +220,11 @@ namespace Wraithguard
 			
 			Gizmos.color = Color.blue;
 			Gizmos.DrawRay(transform.position, xzForward * axisLength);
+		}
+		private void DrawCameraRayGizmo()
+		{
+			Gizmos.color = Color.white;
+			Gizmos.DrawRay(cameraRay);
 		}
 		private void DrawGroundedTestGizmo()
 		{
