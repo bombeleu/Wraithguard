@@ -23,7 +23,7 @@ namespace Wraithguard
 			meshRenderer.material.color = Color.Lerp(cooledColor, Color.red, timeUntilCooled / damageCooldown);
 		}
 		
-		private void TakeDamage(float damage)
+		private void TakeDamage(TakeDamageArgs arg)
 		{
 			timeUntilCooled = damageCooldown;
 		}

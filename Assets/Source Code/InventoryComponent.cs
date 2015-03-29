@@ -13,8 +13,6 @@ namespace Wraithguard
 			if(activatorInventoryComponent != null)
 			{
 				activatorInventoryComponent.inventory.AddItem(0);
-				
-				Debug.Log("Added an item to your inventory.");
 			}
 		}
 	}

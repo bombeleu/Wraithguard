@@ -11,9 +11,9 @@ namespace Wraithguard
 			Debug.Assert(health > 0);
 		}
 		
-		private void TakeDamage(float damage)
+		private void TakeDamage(TakeDamageArgs arg)
 		{
-			health -= damage;
+			health -= arg.damage;
 			
 			if(health <= 0)
 			{

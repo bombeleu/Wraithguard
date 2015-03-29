@@ -96,6 +96,8 @@ namespace Wraithguard
 			}
 		}
 		
+		private uint weaponID = 1;
+		
 		private void Start()
 		{
 			rigidbody = GetComponent<Rigidbody>();
@@ -131,22 +133,31 @@ namespace Wraithguard
 				rigidbody.AddForce(Vector3.up * jumpImpulseMagnitude, ForceMode.Impulse);
 			}
 			
+			uint pressedDigit;
+			
+			if(GetPressedDigit(out pressedDigit))
+			{
+				weaponID = pressedDigit;
+			}
+			
 			if(Input.GetMouseButtonDown(0))
 			{
-				if(sword == null)
+				if(weaponID == 1)
 				{
-					SlashSword();
+					if(sword == null)
+					{
+						SlashSword();
+					}
+				}
+				else if(weaponID == 2)
+				{
+					FireArrow();
 				}
 			}
 			
 			if(sword != null)
 			{
 				UpdateSword();
-			}
-			
-			if(Input.GetMouseButtonDown(1))
-			{
-				FireArrow();
 			}
 		}
 		private void FixedUpdate()
@@ -211,7 +222,7 @@ namespace Wraithguard
 			const float swordLength = 1;
 			
 			GameObject actualSword = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-			actualSword.AddComponent<ActiveSwordComponent>();
+			actualSword.AddComponent<ActiveSwordComponent>().owner = gameObject;
 			
 			actualSword.transform.localScale = new Vector3(0.1f, swordLength / 2, 0.1f);
 			actualSword.GetComponent<CapsuleCollider>().isTrigger = true;
@@ -242,7 +253,7 @@ namespace Wraithguard
 		private void FireArrow()
 		{
 			GameObject arrow = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-			arrow.AddComponent<ArrowComponent>();
+			arrow.AddComponent<ArrowComponent>().owner = gameObject;
 			
 			Rigidbody rigidbody = arrow.AddComponent<Rigidbody>();
 			rigidbody.mass = 1;
@@ -252,6 +263,65 @@ namespace Wraithguard
 			arrow.transform.localScale = new Vector3(0.1f, 0.3f, 0.1f);
 			
 			rigidbody.velocity = cameraRay.direction * 40;
+		}
+		
+		private bool GetPressedDigit(out uint pressedDigit)
+		{
+			if(Input.GetKeyDown(KeyCode.Alpha0))
+			{
+				pressedDigit = 0;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha1))
+			{
+				pressedDigit = 1;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha2))
+			{
+				pressedDigit = 2;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha3))
+			{
+				pressedDigit = 3;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha4))
+			{
+				pressedDigit = 4;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha5))
+			{
+				pressedDigit = 5;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha6))
+			{
+				pressedDigit = 6;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha7))
+			{
+				pressedDigit = 7;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha8))
+			{
+				pressedDigit = 8;
+				return true;
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha9))
+			{
+				pressedDigit = 9;
+				return true;
+			}
+			else
+			{
+				pressedDigit = 0;
+				return false;
+			}
 		}
 		
 		// Debug Stuff

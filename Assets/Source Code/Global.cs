@@ -19,11 +19,11 @@ namespace Wraithguard
 		{
 			gameObject.SendMessage("Activate", activator, SendMessageOptions.DontRequireReceiver);
 		}
-		public static void DamageObject(GameObject gameObject, float damage)
+		public static void DamageObject(GameObject gameObject, float damage, GameObject attacker = null)
 		{
 			Debug.Assert(damage >= 0);
 			
-			gameObject.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
+			gameObject.SendMessage("TakeDamage", new TakeDamageArgs(damage, attacker), SendMessageOptions.DontRequireReceiver);
 		}
 		
 		// GameObject Creation Functions

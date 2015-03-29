@@ -43,6 +43,11 @@ namespace Wraithguard
 		}
 		public override void OnGUI()
 		{
+			if(player != null)
+			{
+				GUI.Label(new Rect(10, 10, 200, 50), player.GetComponent<HealthComponent>().health.ToString());
+			}
+			
 			pauseMenu.OnGUI();
 			inventoryWindow.OnGUI();
 		}
@@ -72,6 +77,8 @@ namespace Wraithguard
 			GameObject chest = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			chest.transform.position = new Vector3(5, 0.5f, 15);
 			chest.AddComponent<InventoryComponent>();
+			
+			CreateEnemy(new Vector3(20, 2, 20));
 		}
 		private void CreatePlayer(float playerHeight = Measures.averageMaleHumanHeight)
 		{
@@ -84,12 +91,28 @@ namespace Wraithguard
 			collider.radius = 1.5f * Measures.footInMeters;
 			
 			Rigidbody rigidbody = player.AddComponent<Rigidbody>();
-			rigidbody.mass = 75;
+			rigidbody.mass = Measures.averageHumanMass;
 			rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			
 			player.AddComponent<PlayerComponent>().height = playerHeight;
-			
+			player.AddComponent<HealthComponent>().health = 100;
 			player.AddComponent<InventoryComponent>().inventory = new Inventory();
+		}
+		private GameObject CreateEnemy(Vector3 position)
+		{
+			GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			
+			Rigidbody rigidbody = enemy.AddComponent<Rigidbody>();
+			rigidbody.mass = Measures.averageHumanMass;
+			rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			
+			enemy.AddComponent<HealthComponent>().health = 100;
+			enemy.AddComponent<EnemyComponent>();
+			enemy.AddComponent<DamageBoxComponent>();
+			
+			enemy.transform.position = position;
+			
+			return enemy;
 		}
 		
 		private void PauseWorld()

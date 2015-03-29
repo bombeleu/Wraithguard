@@ -3,7 +3,6 @@ High Priority
 -Add player inventory GUI.
 -Add item transfer GUI.
 -Add a dialogue system.
--Add weapon switching.
 
 Low Priority
 ============
