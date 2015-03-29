@@ -55,11 +55,18 @@ namespace Wraithguard
 		private GameObject player;
 		private GameObject camera;
 		
+		private const float terrainWidth = 1024;
+		private const float maxTerrainHeight = terrainWidth;
+		private const float terrainLength = terrainWidth;
+		
+		private const float terrainArea = terrainWidth * terrainLength;
+		private const float enemyCount = terrainArea / 2048;
+		
 		private void CreateTerrain()
 		{
 			TerrainData terrainData = new TerrainData();
 			
-			terrainData.size = new Vector3(1024, 1024, 1024);
+			terrainData.size = new Vector3(terrainWidth, maxTerrainHeight, terrainLength);
 			
 			SplatPrototype grassSplat = new SplatPrototype();
 			grassSplat.texture = Global.instance.grassAlbedoTexture;
@@ -78,7 +85,11 @@ namespace Wraithguard
 			chest.transform.position = new Vector3(5, 0.5f, 15);
 			chest.AddComponent<InventoryComponent>();
 			
-			CreateEnemy(new Vector3(20, 2, 20));
+			for(uint enemyIndex = 0; enemyIndex < enemyCount; enemyIndex++)
+			{
+				CreateEnemy(new Vector3(Random.value * terrainWidth, 1, Random.value * terrainLength));
+			}
+			
 		}
 		private void CreatePlayer(float playerHeight = Measures.averageMaleHumanHeight)
 		{

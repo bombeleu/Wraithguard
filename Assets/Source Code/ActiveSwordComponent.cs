@@ -9,6 +9,8 @@ namespace Wraithguard
 		private void OnTriggerEnter(Collider collider)
 		{
 			Global.DamageObject(collider.gameObject, 25, owner);
+			
+			enabled = false;
 		}
 	}
 }

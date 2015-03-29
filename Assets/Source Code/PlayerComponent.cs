@@ -65,7 +65,7 @@ namespace Wraithguard
 			}
 		}
 		
-		private const float jumpImpulseMagnitude = 400;
+		private const float jumpImpulseMagnitude = 350;
 		#endregion
 		
 		private Rigidbody rigidbody;
@@ -152,6 +152,10 @@ namespace Wraithguard
 				else if(weaponID == 2)
 				{
 					FireArrow();
+				}
+				else if(weaponID == 3)
+				{
+					CastRangedExplosion();
 				}
 			}
 			
@@ -253,16 +257,32 @@ namespace Wraithguard
 		private void FireArrow()
 		{
 			GameObject arrow = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			arrow.transform.localScale = new Vector3(0.1f, 0.3f, 0.1f);
+			
 			arrow.AddComponent<ArrowComponent>().owner = gameObject;
 			
-			Rigidbody rigidbody = arrow.AddComponent<Rigidbody>();
-			rigidbody.mass = 1;
+			Rigidbody arrowRigidbody = arrow.AddComponent<Rigidbody>();
+			arrowRigidbody.mass = 1;
 			
 			arrow.transform.position = cameraRay.GetPoint(1);
 			arrow.transform.eulerAngles = new Vector3(cameraXAngle + 90, yAngle, 0);
-			arrow.transform.localScale = new Vector3(0.1f, 0.3f, 0.1f);
 			
-			rigidbody.velocity = cameraRay.direction * 40;
+			arrowRigidbody.velocity = rigidbody.velocity + (cameraRay.direction * 40);
+		}
+		
+		private void CastRangedExplosion()
+		{
+			GameObject spell = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			spell.name = "spell";
+			spell.transform.localScale = Vector3.one * 0.25f;
+			spell.AddComponent<SpellComponent>().owner = gameObject;
+			
+			Rigidbody spellRigidbody = spell.AddComponent<Rigidbody>();
+			spellRigidbody.useGravity = false;
+			
+			spell.transform.position = cameraRay.GetPoint(1);
+			
+			spellRigidbody.velocity = rigidbody.velocity + (cameraRay.direction * 40);
 		}
 		
 		private bool GetPressedDigit(out uint pressedDigit)
