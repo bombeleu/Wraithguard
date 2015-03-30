@@ -9,6 +9,7 @@ namespace Wraithguard
 			buttonLayout = new VerticalRectangleLayout(new Vector2(20, 20), 10);
 			buttonLayout.AddRectangle(buttonSize);
 			buttonLayout.AddRectangle(buttonSize);
+			buttonLayout.AddRectangle(buttonSize);
 		}
 		public override void OnStart()
 		{
@@ -18,10 +19,15 @@ namespace Wraithguard
 		{
 			if(GUI.Button(buttonLayout.rectangles[0], "Play"))
 			{
-				Play();
+				Global.ClearSceneAndChangeGameState(new PlayState());
 			}
 			
-			if(GUI.Button(buttonLayout.rectangles[1], "Quit"))
+			if(GUI.Button(buttonLayout.rectangles[1], "Editor"))
+			{
+				Global.ClearSceneAndChangeGameState(new EditorState());
+			}
+			
+			if(GUI.Button(buttonLayout.rectangles[2], "Quit"))
 			{
 				Application.Quit();
 			}
@@ -29,17 +35,5 @@ namespace Wraithguard
 		
 		private VerticalRectangleLayout buttonLayout;
 		private readonly Vector2 buttonSize = new Vector2(200, 50);
-		
-		private void Play()
-		{
-			Global.instance.ChangeGameStateImmediately(null);
-			
-			Global.instance.onNextSceneLoaded = delegate()
-			{
-				Global.instance.ChangeGameState(new PlayState());
-			};
-			
-			Application.LoadLevel(0);
-		}
 	}
 }

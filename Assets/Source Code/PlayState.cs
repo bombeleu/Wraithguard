@@ -6,7 +6,16 @@ namespace Wraithguard
 	{
 		public PlayState()
 		{
-			pauseMenu = new PauseMenu(delegate(){TogglePauseMenu();}, delegate(){ReturnToMainMenu();});
+			pauseMenu = new PauseMenu(
+			delegate()
+			{
+				TogglePauseMenu();
+			},
+			
+			delegate()
+			{
+				Global.ClearSceneAndChangeGameState(new MainMenuState());
+			});
 		}
 		public override void OnStart()
 		{
@@ -143,17 +152,6 @@ namespace Wraithguard
 			{
 				player.GetComponent<PlayerComponent>().enabled = true;
 			}
-		}
-		private void ReturnToMainMenu()
-		{
-			Global.instance.ChangeGameStateImmediately(null);
-			
-			Global.instance.onNextSceneLoaded = delegate()
-			{
-				Global.instance.ChangeGameState(new MainMenuState());
-			};
-			
-			Application.LoadLevel(0);
 		}
 		
 		#region GUI

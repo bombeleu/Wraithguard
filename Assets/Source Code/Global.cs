@@ -26,6 +26,18 @@ namespace Wraithguard
 			gameObject.SendMessage("TakeDamage", new TakeDamageArgs(damage, attacker), SendMessageOptions.DontRequireReceiver);
 		}
 		
+		public static void ClearSceneAndChangeGameState(GameState gameState)
+		{
+			Global.instance.ChangeGameStateImmediately(null);
+			
+			Global.instance.onNextSceneLoaded = delegate()
+			{
+				Global.instance.ChangeGameState(gameState);
+			};
+			
+			Application.LoadLevel(0);
+		}
+		
 		// GameObject Creation Functions
 		// =============================
 		public static GameObject CreateCamera()
