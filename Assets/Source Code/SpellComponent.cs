@@ -7,7 +7,7 @@ namespace Wraithguard
 		public GameObject owner;
 		
 		private const float explosionRadius = 15;
-		private const float explosionImpulseMagnitude = 2000;
+		private const float explosionImpulseMagnitude = 1000;
 		
 		private void OnCollisionEnter(Collision collision)
 		{

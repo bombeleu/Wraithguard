@@ -4,9 +4,14 @@ High Priority
 Low Priority
 ============
 -Add options screen to pause menu.
--Add crosshair.
 -Generate interesting terrain.
 -Add water.
+-Upgrade to new GUI system.
+-Spells Weapon System
+-Telekenesis
+-Teleportation
 
 Finished
 ========
+-Add crosshair.
+-Add a developer console.

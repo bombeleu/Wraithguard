@@ -16,6 +16,8 @@ namespace Wraithguard
 			{
 				Global.ClearSceneAndChangeGameState(new MainMenuState());
 			});
+			
+			console = new Console(OnCommandEntered);
 		}
 		public override void OnStart()
 		{
@@ -45,7 +47,12 @@ namespace Wraithguard
 				TogglePauseMenu();
 			}
 			
-			if(!pauseMenu.isVisible && Input.GetKeyDown(KeyCode.B))
+			if(Input.GetKeyDown(KeyCode.BackQuote))
+			{
+				ToggleConsole();
+			}
+			
+			if(!pauseMenu.isVisible && !console.isVisible && Input.GetKeyDown(KeyCode.B))
 			{
 				ToggleInventoryWindow();
 			}
@@ -54,7 +61,11 @@ namespace Wraithguard
 		{
 			if(player != null)
 			{
-				GUI.Label(new Rect(10, 10, 200, 50), player.GetComponent<HealthComponent>().health.ToString());
+				GUI.Label(new Rect(10, 10, 200, 50), player.GetComponent<StatsComponent>().attributes.health.value.ToString());
+				
+				DrawCrosshair();
+				
+				console.OnGUI();
 			}
 			
 			pauseMenu.OnGUI();
@@ -69,7 +80,7 @@ namespace Wraithguard
 		private const float terrainLength = terrainWidth;
 		
 		private const float terrainArea = terrainWidth * terrainLength;
-		private const float enemyCount = terrainArea / 2048;
+		private const float enemyCount = terrainArea / 4096;
 		
 		private void CreateTerrain()
 		{
@@ -115,7 +126,7 @@ namespace Wraithguard
 			rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			
 			player.AddComponent<PlayerComponent>().height = playerHeight;
-			player.AddComponent<HealthComponent>().health = 100;
+			player.AddComponent<StatsComponent>().attributes.health.value = 100;
 			player.AddComponent<InventoryComponent>().inventory = new Inventory();
 		}
 		private GameObject CreateEnemy(Vector3 position)
@@ -126,7 +137,7 @@ namespace Wraithguard
 			rigidbody.mass = Measures.averageHumanMass;
 			rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			
-			enemy.AddComponent<HealthComponent>().health = 100;
+			enemy.AddComponent<StatsComponent>().attributes.health.value = 100;
 			enemy.AddComponent<EnemyComponent>();
 			enemy.AddComponent<DamageBoxComponent>();
 			
@@ -157,6 +168,12 @@ namespace Wraithguard
 		#region GUI
 		private PauseMenu pauseMenu;
 		private InventoryWindow inventoryWindow;
+		private Console console;
+		
+		private Vector2 crosshairSize = new Vector2(25, 25);
+		private const float crosshairThickness = 2;
+		private readonly Color crosshairColor = Color.red;
+		private Texture2D whiteTexture;
 		
 		private void OnEnterGUIScreen()
 		{
@@ -206,6 +223,57 @@ namespace Wraithguard
 				
 				OnExitGUIScreen();
 			}
+		}
+		private void ToggleConsole()
+		{
+			if(!console.isVisible)
+			{
+				PauseWorld();
+				
+				console.isVisible = true;
+				
+				OnEnterGUIScreen();
+			}
+			else
+			{
+				UnpauseWorld();
+				
+				console.isVisible = false;
+				
+				OnExitGUIScreen();
+			}
+		}
+		private void OnCommandEntered(string command)
+		{
+			if(command == "quit")
+			{
+				Global.ClearSceneAndChangeGameState(new MainMenuState());
+			}
+		}
+		private void DrawCrosshair()
+		{
+			if(whiteTexture == null)
+			{
+				whiteTexture = new Texture2D(1, 1);
+				whiteTexture.SetPixel(1, 1, Color.white);
+				whiteTexture.Apply();
+			}
+			
+			Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
+			Vector2 halfCrosshairSize = crosshairSize / 2;
+			const float halfCrosshairThickness = crosshairThickness / 2;
+			
+			Color savedGUITint = GUI.color;
+			
+			GUI.color = crosshairColor;
+			
+			// Draw the horizontal line.
+			GUI.DrawTexture(new Rect(screenCenter.x - halfCrosshairSize.x, screenCenter.y - halfCrosshairThickness, crosshairSize.x, crosshairThickness), whiteTexture);
+			
+			// Draw the vertical line.
+			GUI.DrawTexture(new Rect(screenCenter.x - halfCrosshairThickness, screenCenter.y - halfCrosshairSize.y, crosshairThickness, crosshairSize.y), whiteTexture);
+			
+			GUI.color = savedGUITint;
 		}
 		#endregion
 	}

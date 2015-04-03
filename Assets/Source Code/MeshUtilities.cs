@@ -4,71 +4,64 @@ namespace Wraithguard
 {
 	public static class MeshUtilities
 	{
-		public static Mesh CreateRectangleMesh(Vector2 size)
+		public static EditMesh CreateRectangleMesh(Vector2 size)
 		{
 			Debug.Assert(size.x > 0 && size.y > 0);
 			
 			const uint vertexCount = 4;
-			const uint triangleCount = 2;
-			const uint indexCount = triangleCount * 3;
-			
 			Vector2 halfSize = size / 2;
 			
-			Vector3[] vertices = new Vector3[vertexCount];
-			vertices[0] = new Vector3(-halfSize.x, halfSize.y, 0);
-			vertices[1] = new Vector3(halfSize.x, halfSize.y, 0);
-			vertices[2] = new Vector3(-halfSize.x, -halfSize.y, 0);
-			vertices[3] = new Vector3(halfSize.x, -halfSize.y, 0);
+			Vector3[] vertexPositions = new Vector3[vertexCount];
+			vertexPositions[0] = new Vector3(-halfSize.x, halfSize.y, 0);
+			vertexPositions[1] = new Vector3(halfSize.x, halfSize.y, 0);
+			vertexPositions[2] = new Vector3(-halfSize.x, -halfSize.y, 0);
+			vertexPositions[3] = new Vector3(halfSize.x, -halfSize.y, 0);
 			
 			Vector3 normal = -Vector3.forward;
 			
-			Vector3[] normals = new Vector3[vertexCount];
-			normals[0] = normal;
-			normals[1] = normal;
-			normals[2] = normal;
-			normals[3] = normal;
+			Vector3[] vertexNormals = new Vector3[vertexCount];
+			vertexNormals[0] = normal;
+			vertexNormals[1] = normal;
+			vertexNormals[2] = normal;
+			vertexNormals[3] = normal;
 			
-			Vector2[] uvs = new Vector2[vertexCount];
-			uvs[0] = new Vector2(0, 1);
-			uvs[1] = new Vector2(1, 1);
-			uvs[2] = new Vector2(0, 0);
-			uvs[3] = new Vector2(1, 0);
+			Vector2[] vertexUVs = new Vector2[vertexCount];
+			vertexUVs[0] = new Vector2(0, 1);
+			vertexUVs[1] = new Vector2(1, 1);
+			vertexUVs[2] = new Vector2(0, 0);
+			vertexUVs[3] = new Vector2(1, 0);
 			
 			Vector4 tangent = new Vector4(1, 0, 0, -1);
 			
-			Vector4[] tangents = new Vector4[vertexCount];
-			tangents[0] = tangent;
-			tangents[1] = tangent;
-			tangents[2] = tangent;
-			tangents[3] = tangent;
+			Vector4[] vertexTangents = new Vector4[vertexCount];
+			vertexTangents[0] = tangent;
+			vertexTangents[1] = tangent;
+			vertexTangents[2] = tangent;
+			vertexTangents[3] = tangent;
 			
-			int[] indices = new int[indexCount];
-			indices[0] = 0;
-			indices[1] = 1;
-			indices[2] = 2;
+			const uint triangleCount = 2;
+			const uint indexCount = triangleCount * 3;
 			
-			indices[3] = 1;
-			indices[4] = 3;
-			indices[5] = 2;
+			int[] vertexIndices = new int[indexCount];
+			vertexIndices[0] = 0;
+			vertexIndices[1] = 1;
+			vertexIndices[2] = 2;
 			
-			Mesh mesh = new Mesh();
-			mesh.vertices = vertices;
-			mesh.normals = normals;
-			mesh.uv = uvs;
-			mesh.tangents = tangents;
-			mesh.triangles = indices;
+			vertexIndices[3] = 1;
+			vertexIndices[4] = 3;
+			vertexIndices[5] = 2;
 			
-			return mesh;
+			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
 		}
-		public static Mesh CreateCircleMesh(float radius, uint vertexCount)
+		public static EditMesh CreateCircleMesh(float radius, uint vertexCount)
 		{
 			Debug.Assert(radius > 0);
 			Debug.Assert(vertexCount >= 3);
 			
-			Vector3[] vertices = new Vector3[vertexCount];
-			Vector3[] normals = new Vector3[vertexCount];
-			Vector2[] uvs = new Vector2[vertexCount];
-			Vector4[] tangents = new Vector4[vertexCount];
+			Vector3[] vertexPositions = new Vector3[vertexCount];
+			Vector3[] vertexNormals = new Vector3[vertexCount];
+			Vector2[] vertexUVs = new Vector2[vertexCount];
+			Vector4[] vertexTangents = new Vector4[vertexCount];
 			
 			float angleIncrement = (360 / vertexCount) * Mathf.Deg2Rad;
 			
@@ -78,34 +71,27 @@ namespace Wraithguard
 				
 				Vector2 uv = Math.AngleToUnitVector(angle);
 				
-				vertices[vertexIndex] = uv * radius;
-				normals[vertexIndex] = -Vector3.forward;
-				uvs[vertexIndex] = uv;
-				tangents[vertexIndex] = new Vector4(1, 0, 0, -1);
+				vertexPositions[vertexIndex] = uv * radius;
+				vertexNormals[vertexIndex] = -Vector3.forward;
+				vertexUVs[vertexIndex] = uv;
+				vertexTangents[vertexIndex] = new Vector4(1, 0, 0, -1);
 			}
 			
 			int triangleCount = (int)vertexCount - 2;
-			int[] indices = new int[triangleCount * 3];
+			int[] vertexIndices = new int[triangleCount * 3];
 			
 			for(int vertexIndex = 0; vertexIndex < triangleCount; vertexIndex++)
 			{
 				int baseIndexIndex = vertexIndex * 3;
 				
-				indices[baseIndexIndex] = 0;
-				indices[baseIndexIndex + 1] = vertexIndex + 2;
-				indices[baseIndexIndex + 2] = vertexIndex + 1;
+				vertexIndices[baseIndexIndex] = 0;
+				vertexIndices[baseIndexIndex + 1] = vertexIndex + 2;
+				vertexIndices[baseIndexIndex + 2] = vertexIndex + 1;
 			}
 			
-			Mesh mesh = new Mesh();
-			mesh.vertices = vertices;
-			mesh.normals = normals;
-			mesh.uv = uvs;
-			mesh.tangents = tangents;
-			mesh.triangles = indices;
-			
-			return mesh;
+			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
 		}
-		public static Mesh CreateCuboidMesh(Vector3 size)
+		public static EditMesh CreateCuboidMesh(Vector3 size)
 		{
 			Debug.Assert(size.x > 0 && size.y > 0 && size.z > 0);
 			
@@ -145,7 +131,7 @@ namespace Wraithguard
 			Vector4 backFT = new Vector4(-1, 0, 0, -1);
 			
 			// vertex attribute arrays
-			Vector3[] vertices = new Vector3[vertexCount]
+			Vector3[] vertexPositions = new Vector3[vertexCount]
 			{
 				// left
 				LTBVP, LTFVP, LBBVP, LBFVP,
@@ -166,7 +152,7 @@ namespace Wraithguard
 				RTBVP, LTBVP, RBBVP, LBBVP
 			};
 			
-			Vector3[] normals = new Vector3[vertexCount]
+			Vector3[] vertexNormals = new Vector3[vertexCount]
 			{
 				// left
 				leftFN, leftFN, leftFN, leftFN,
@@ -187,7 +173,7 @@ namespace Wraithguard
 				backFN, backFN, backFN, backFN
 			};
 			
-			Vector2[] uvs = new Vector2[vertexCount]
+			Vector2[] vertexUVs = new Vector2[vertexCount]
 			{
 				// left
 				TLUV, TRUV, BLUV, BRUV,
@@ -208,7 +194,7 @@ namespace Wraithguard
 				TLUV, TRUV, BLUV, BRUV
 			};
 			
-			Vector4[] tangents = new Vector4[vertexCount]
+			Vector4[] vertexTangents = new Vector4[vertexCount]
 			{
 				// left
 				leftFT, leftFT, leftFT, leftFT,
@@ -229,7 +215,7 @@ namespace Wraithguard
 				backFT, backFT, backFT, backFT
 			};
 			
-			int[] indices = new int[indexCount]
+			int[] vertexIndices = new int[indexCount]
 			{
 				// left
 				0, 1, 2, 1, 3, 2,
@@ -250,16 +236,9 @@ namespace Wraithguard
 				20, 21, 22, 21, 23, 22,
 			};
 			
-			Mesh mesh = new Mesh();
-			mesh.vertices = vertices;
-			mesh.normals = normals;
-			mesh.uv = uvs;
-			mesh.tangents = tangents;
-			mesh.triangles = indices;
-			
-			return mesh;
+			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
 		}
-		public static Mesh CreateUVSphereMesh(float radius, int latitudeRingCount, int longitudeRingCount)
+		public static EditMesh CreateUVSphereMesh(float radius, int latitudeRingCount, int longitudeRingCount)
 		{
 			Debug.Assert(radius > 0);
 			Debug.Assert(latitudeRingCount >= 1);
@@ -271,10 +250,10 @@ namespace Wraithguard
 			
 			int vertexCount = latitudeRingCountIncludingPoles * vertexCountPerLatitudeRing;
 			
-			Vector3[] vertices = new Vector3[vertexCount];
-			Vector3[] normals = new Vector3[vertexCount];
-			//Vector2[] uvs = new Vector2[vertexCount];
-			//Vector4[] tangents = new Vector4[vertexCount];
+			Vector3[] vertexPositions = new Vector3[vertexCount];
+			Vector3[] vertexNormals = new Vector3[vertexCount];
+			Vector2[] vertexUVs = null;
+			Vector4[] vertexTangents = null;
 			
 			float latitudeIncrement = Mathf.PI / (latitudeRingCountIncludingPoles - 1);
 			float longitudeIncrement = (2 * Mathf.PI) / vertexCountPerLatitudeRing;
@@ -289,11 +268,11 @@ namespace Wraithguard
 					int vertexIndex = baseVertexIndex + ringVertexIndex;
 					float longitude = (ringVertexIndex * longitudeIncrement);
 					
-					Vector3 normal = Math.LatitudeLongitudeToUnitVector(latitude, longitude);
-					Vector3 vertexPosition = normal * radius;
+					Vector3 vertexNormal = Math.LatitudeLongitudeToUnitVector(latitude, longitude);
+					Vector3 vertexPosition = vertexNormal * radius;
 					
-					vertices[vertexIndex] = vertexPosition;
-					normals[vertexIndex] = normal;
+					vertexPositions[vertexIndex] = vertexPosition;
+					vertexNormals[vertexIndex] = vertexNormal;
 				}
 			}
 			
@@ -307,7 +286,7 @@ namespace Wraithguard
 			int triangleCount = (triangleCountPerQuadRing * quadRingCount) + (triangleCountPerCap * 2);
 			int indexCount = triangleCount * 3;
 			
-			int[] indices = new int[indexCount];
+			int[] vertexIndices = new int[indexCount];
 			int indexIndex = 0;
 			
 			for(int latitudeRingIndex = 0; latitudeRingIndex < (latitudeRingCountIncludingPoles - 1); latitudeRingIndex++)
@@ -325,45 +304,38 @@ namespace Wraithguard
 					
 					if(latitudeRingIndex == 0) // bottom cap
 					{
-						indices[indexIndex] = BLVI;
-						indices[indexIndex + 1] = TLVI;
-						indices[indexIndex + 2] = TRVI;
+						vertexIndices[indexIndex] = BLVI;
+						vertexIndices[indexIndex + 1] = TLVI;
+						vertexIndices[indexIndex + 2] = TRVI;
 						
 						indexIndex += 3;
 					}
 					else if(latitudeRingIndex == latitudeRingCountIncludingPoles - 2) // top cap
 					{
-						indices[indexIndex] = BLVI;
-						indices[indexIndex + 1] = TLVI;
-						indices[indexIndex + 2] = BRVI;
+						vertexIndices[indexIndex] = BLVI;
+						vertexIndices[indexIndex + 1] = TLVI;
+						vertexIndices[indexIndex + 2] = BRVI;
 						
 						indexIndex += 3;
 					}
 					else // quad ring
 					{
-						indices[indexIndex] = BLVI;
-						indices[indexIndex + 1] = TLVI;
-						indices[indexIndex + 2] = TRVI;
+						vertexIndices[indexIndex] = BLVI;
+						vertexIndices[indexIndex + 1] = TLVI;
+						vertexIndices[indexIndex + 2] = TRVI;
 						
-						indices[indexIndex + 3] = TRVI;
-						indices[indexIndex + 4] = BRVI;
-						indices[indexIndex + 5] = BLVI;
+						vertexIndices[indexIndex + 3] = TRVI;
+						vertexIndices[indexIndex + 4] = BRVI;
+						vertexIndices[indexIndex + 5] = BLVI;
 						
 						indexIndex += 6;
 					}
 				}
 			}
 			
-			Mesh mesh = new Mesh();
-			mesh.vertices = vertices;
-			mesh.normals = normals;
-			//mesh.uv = uvs;
-			//mesh.tangents = tangents;
-			mesh.triangles = indices;
-			
-			return mesh;
+			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
 		}
-		public static Mesh CreateTorusMesh(float majorRadius, float minorRadius, int majorRingCount, int minorRingCount)
+		public static EditMesh CreateTorusMesh(float majorRadius, float minorRadius, int majorRingCount, int minorRingCount)
 		{
 			Debug.Assert(majorRadius > 0);
 			Debug.Assert(minorRadius > 0);
@@ -372,10 +344,10 @@ namespace Wraithguard
 			
 			int vertexCount = majorRingCount * minorRingCount;
 			
-			Vector3[] vertices = new Vector3[vertexCount];
-			//Vector3[] normals = new Vector3[vertexCount];
-			//Vector2[] uvs = new Vector2[vertexCount];
-			//Vector4[] tangents = new Vector4[vertexCount];
+			Vector3[] vertexPositions = new Vector3[vertexCount];
+			Vector3[] vertexNormals = null;
+			Vector2[] vertexUVs = null;
+			Vector4[] vertexTangents = null;
 			
 			float majorAngleIncrement = (2 * Mathf.PI) / majorRingCount;
 			float minorAngleIncrement = (2 * Mathf.PI) / minorRingCount;
@@ -392,7 +364,7 @@ namespace Wraithguard
 					
 					Vector3 vertexPosition = Math.GetPointOnTorus(majorRadius, minorRadius, majorAngle, minorAngle);
 					
-					vertices[vertexIndex] = vertexPosition;
+					vertexPositions[vertexIndex] = vertexPosition;
 				}
 			}
 			
@@ -400,7 +372,7 @@ namespace Wraithguard
 			int triangleCount = quadCount * 2;
 			int indexCount = triangleCount * 3;
 			
-			int[] indices = new int[indexCount];
+			int[] vertexIndices = new int[indexCount];
 			int indexIndex = 0;
 			
 			for(int majorRingIndex = 0; majorRingIndex < majorRingCount; majorRingIndex++)
@@ -416,24 +388,29 @@ namespace Wraithguard
 					int TLVI = (BLVI + minorRingCount) % vertexCount;
 					int TRVI = (BRVI + minorRingCount) % vertexCount;
 					
-					indices[indexIndex] = BLVI;
-					indices[indexIndex + 1] = TLVI;
-					indices[indexIndex + 2] = TRVI;
+					vertexIndices[indexIndex] = BLVI;
+					vertexIndices[indexIndex + 1] = TLVI;
+					vertexIndices[indexIndex + 2] = TRVI;
 					
-					indices[indexIndex + 3] = TRVI;
-					indices[indexIndex + 4] = BRVI;
-					indices[indexIndex + 5] = BLVI;
+					vertexIndices[indexIndex + 3] = TRVI;
+					vertexIndices[indexIndex + 4] = BRVI;
+					vertexIndices[indexIndex + 5] = BLVI;
 					
 					indexIndex += 6;
 				}
 			}
 			
+			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
+		}
+		
+		public static Mesh CreateMesh(EditMesh editMesh)
+		{
 			Mesh mesh = new Mesh();
-			mesh.vertices = vertices;
-			//mesh.normals = normals;
-			//mesh.uv = uvs;
-			//mesh.tangents = tangents;
-			mesh.triangles = indices;
+			mesh.vertices = editMesh.vertexPositions;
+			mesh.normals = editMesh.vertexNormals;
+			mesh.uv = editMesh.vertexUVs;
+			mesh.tangents = editMesh.vertexTangents;
+			mesh.triangles = editMesh.vertexIndices;
 			
 			return mesh;
 		}

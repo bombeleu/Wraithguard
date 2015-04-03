@@ -8,7 +8,7 @@ namespace Wraithguard
 		{
 			Global.CreateCamera();
 			
-			Mesh mesh = MeshUtilities.CreateTorusMesh(0.5f, 0.1f, 32, 16);
+			Mesh mesh = MeshUtilities.CreateMesh(MeshUtilities.CreateTorusMesh(0.5f, 0.1f, 32, 16));
 			
 			GameObject meshObject = new GameObject("generatedMesh");
 			meshObject.AddComponent<MeshFilter>().mesh = mesh;

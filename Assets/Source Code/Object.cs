@@ -21,7 +21,7 @@ namespace Wraithguard
 				createdObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
 				createdObject.AddComponent<Rigidbody>().mass = 5;
 				createdObject.AddComponent<DamageBoxComponent>();
-				createdObject.AddComponent<HealthComponent>().health = 100;
+				createdObject.AddComponent<StatsComponent>().attributes.health.value = 100;
 			}
 			else
 			{
