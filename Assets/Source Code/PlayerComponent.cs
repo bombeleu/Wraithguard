@@ -77,14 +77,14 @@ namespace Wraithguard
 		{
 			get
 			{
-				return Math.Reject(transform.forward, Vector3.up);
+				return Vector3.ProjectOnPlane(transform.forward, Vector3.up);
 			}
 		}
 		private Vector3 xzRight
 		{
 			get
 			{
-				return Math.Reject(transform.right, Vector3.up);
+				return Vector3.ProjectOnPlane(transform.right, Vector3.up);
 			}
 		}
 		

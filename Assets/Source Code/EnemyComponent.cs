@@ -56,7 +56,7 @@ namespace Wraithguard
 				}
 				else
 				{
-					Vector3 horizontalTargetDisplacement = Math.Reject(targetDisplacement, Vector3.up);
+					Vector3 horizontalTargetDisplacement = Vector3.ProjectOnPlane(targetDisplacement, Vector3.up);
 					Vector3 horizontalDirectionToTarget = horizontalTargetDisplacement.normalized;
 					
 					rigidbody.AddForce(horizontalDirectionToTarget * movementForceMagnitude);

@@ -10,6 +10,7 @@ namespace Wraithguard
 			buttonLayout.AddRectangle(buttonSize);
 			buttonLayout.AddRectangle(buttonSize);
 			buttonLayout.AddRectangle(buttonSize);
+			buttonLayout.AddRectangle(buttonSize);
 		}
 		public override void OnStart()
 		{
@@ -27,7 +28,12 @@ namespace Wraithguard
 				Global.ClearSceneAndChangeGameState(new EditorState());
 			}
 			
-			if(GUI.Button(buttonLayout.rectangles[2], "Quit"))
+			if(GUI.Button(buttonLayout.rectangles[2], "Test"))
+			{
+				Global.ClearSceneAndChangeGameState(new TestState());
+			}
+			
+			if(GUI.Button(buttonLayout.rectangles[3], "Quit"))
 			{
 				Application.Quit();
 			}

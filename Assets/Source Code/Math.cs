@@ -4,9 +4,22 @@ namespace Wraithguard
 {
 	public static class Math
 	{
+		public delegate Vector2 Curve2DFunction(float t);
+		public delegate Vector3 Curve3DFunction(float t);
+		
+		public const float pi = 3.14159265359f;
+		public const float twoPi = 6.28318530718f;
+		public const float piOverTwo = 1.57079632679f;
+		public const float e = 2.718281828459045f;
+		
 		public static Vector3 Reject(Vector3 a, Vector3 b)
 		{
 			return a - Vector3.Project(a, b);
+		}
+		
+		public static bool AreParallel(Vector3 a, Vector3 b)
+		{
+			return Vector3.Cross(a, b) == Vector3.zero;
 		}
 		
 		public static Vector2 AngleToUnitVector(float angle)
@@ -46,6 +59,101 @@ namespace Wraithguard
 			float totalRadius = majorRadius + (minorRadius * cosMin);
 			
 			return new Vector3(totalRadius * cosMaj, minorRadius * sinMin, totalRadius * sinMaj);
+		}
+		
+		public static Vector3 CentralFiniteDifference(Vector3 previousVector, Vector3 nextVector, float h)
+		{
+			return (nextVector - previousVector) / (2 * h);
+		}
+		public static Vector3 CentralFiniteDifference2ndOrder(Vector3 previousVector, Vector3 vector, Vector3 nextVector, float h)
+		{
+			return (nextVector - (2 * vector) + previousVector) / (h * h);
+		}
+		
+		public static void GetPolylinePlaneNormalsAndPerpendicularVectors(Vector3[] polylineVertices, out Vector3[] planeNormals, out Vector3[] perpendicularVectors)
+		{
+			planeNormals = new Vector3[polylineVertices.Length];
+			perpendicularVectors = new Vector3[polylineVertices.Length];
+			
+			int lastVertexIndex = polylineVertices.Length - 1;
+			
+			for(int vertexIndex = 0; vertexIndex <= lastVertexIndex; vertexIndex++)
+			{
+				// Find the bisecting plane normal.
+				Vector3 planeNormal;
+				
+				if(vertexIndex == 0)
+				{
+					planeNormal = polylineVertices[1] - polylineVertices[0];
+				}
+				else if(vertexIndex == lastVertexIndex)
+				{
+					planeNormal = polylineVertices[lastVertexIndex] - polylineVertices[lastVertexIndex - 1];
+				}
+				else
+				{
+					planeNormal = polylineVertices[vertexIndex + 1] - polylineVertices[vertexIndex - 1];
+				}
+				
+				planeNormal.Normalize();
+				
+				planeNormals[vertexIndex] = planeNormal;
+				
+				// Find the perpendicular vector.
+				if(!AreParallel(planeNormal, Vector3.up))
+				{
+					perpendicularVectors[vertexIndex] = Vector3.Cross(Vector3.up, planeNormal).normalized;
+				}
+				else
+				{
+					if(vertexIndex == 0)
+					{
+						perpendicularVectors[vertexIndex] = Vector3.right;
+					}
+					else
+					{
+						perpendicularVectors[vertexIndex] = perpendicularVectors[vertexIndex - 1];
+					}
+				}
+			}
+		}
+		
+		public static float NearestNeighborInterpolate(float a, float b, float t)
+		{
+			return (t < 0.5f) ? a : b;
+		}
+		public static float LinearInterpolate(float a, float b, float t)
+		{
+			return a + (t * (b - a));
+		}
+		
+		public static float MassSpringDamperFunction(float m, float k, float c, float x0, float dx0, float t)
+		{
+			float w0 = Mathf.Sqrt(k / m);
+			float zeta = c / (2 * Mathf.Sqrt(m * k));
+			
+			Debug.Assert(zeta >= 0);
+			
+			if(zeta < 1) // under-damped
+			{
+				float wd = w0 * Mathf.Sqrt(1 - (zeta * zeta));
+				float A = x0;
+				float B = (1 / wd) * ((zeta * w0 * x0) + dx0);
+				
+				return Mathf.Pow(e, -(zeta * w0 * t)) * ((A * Mathf.Cos(wd * t)) + (B * Mathf.Sin(wd * t)));
+			}
+			else if(zeta == 1) // critically-damped
+			{
+				float A = x0;
+				float B = dx0 + (w0 * x0);
+				
+				return (A + (B * t)) * Mathf.Pow(e, -(w0 * t));
+			}
+			else // over-damped
+			{
+				Debug.Assert(false); // hanven't implemented this yet
+				return 0;
+			}
 		}
 	}
 }

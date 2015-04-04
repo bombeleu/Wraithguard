@@ -13,5 +13,3 @@ Low Priority
 
 Finished
 ========
--Add crosshair.
--Add a developer console.

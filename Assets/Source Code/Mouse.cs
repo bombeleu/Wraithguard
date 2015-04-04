@@ -4,7 +4,7 @@ namespace Wraithguard
 {
 	public static class Mouse
 	{
-		public static float mouseSensitivity = 2;
+		public static float mouseSensitivity = 1;
 		
 		public static Vector2 deltaMouse
 		{
