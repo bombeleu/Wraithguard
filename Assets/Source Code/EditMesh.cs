@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Wraithguard
 {
@@ -51,7 +52,14 @@ namespace Wraithguard
 			vertexIndices[4] = 3;
 			vertexIndices[5] = 2;
 			
-			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
+			EditMesh editMesh = new EditMesh();
+			editMesh.vertexPositions = vertexPositions;
+			editMesh.vertexNormals = vertexNormals;
+			editMesh.vertexUVs = vertexUVs;
+			editMesh.vertexTangents = vertexTangents;
+			editMesh.vertexIndices = vertexIndices;
+			
+			return editMesh;
 		}
 		public static EditMesh CreateCircle(float radius, uint vertexCount)
 		{
@@ -89,7 +97,14 @@ namespace Wraithguard
 				vertexIndices[baseIndexIndex + 2] = vertexIndex + 1;
 			}
 			
-			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
+			EditMesh editMesh = new EditMesh();
+			editMesh.vertexPositions = vertexPositions;
+			editMesh.vertexNormals = vertexNormals;
+			editMesh.vertexUVs = vertexUVs;
+			editMesh.vertexTangents = vertexTangents;
+			editMesh.vertexIndices = vertexIndices;
+			
+			return editMesh;
 		}
 		public static EditMesh CreateCuboid(Vector3 size)
 		{
@@ -236,7 +251,14 @@ namespace Wraithguard
 				20, 21, 22, 21, 23, 22,
 			};
 			
-			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
+			EditMesh editMesh = new EditMesh();
+			editMesh.vertexPositions = vertexPositions;
+			editMesh.vertexNormals = vertexNormals;
+			editMesh.vertexUVs = vertexUVs;
+			editMesh.vertexTangents = vertexTangents;
+			editMesh.vertexIndices = vertexIndices;
+			
+			return editMesh;
 		}
 		public static EditMesh CreateUVSphere(float radius, int latitudeRingCount, int longitudeRingCount)
 		{
@@ -333,7 +355,14 @@ namespace Wraithguard
 				}
 			}
 			
-			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
+			EditMesh editMesh = new EditMesh();
+			editMesh.vertexPositions = vertexPositions;
+			editMesh.vertexNormals = vertexNormals;
+			editMesh.vertexUVs = vertexUVs;
+			editMesh.vertexTangents = vertexTangents;
+			editMesh.vertexIndices = vertexIndices;
+			
+			return editMesh;
 		}
 		public static EditMesh CreateTorus(float majorRadius, float minorRadius, int majorRingCount, int minorRingCount)
 		{
@@ -400,7 +429,14 @@ namespace Wraithguard
 				}
 			}
 			
-			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
+			EditMesh editMesh = new EditMesh();
+			editMesh.vertexPositions = vertexPositions;
+			editMesh.vertexNormals = vertexNormals;
+			editMesh.vertexUVs = vertexUVs;
+			editMesh.vertexTangents = vertexTangents;
+			editMesh.vertexIndices = vertexIndices;
+			
+			return editMesh;
 		}
 		public static EditMesh CreateCylinderAlongPolyline(Vector3[] polylineVertices, float radius, int ringVertexCount)
 		{
@@ -472,7 +508,14 @@ namespace Wraithguard
 				}
 			}
 			
-			return new EditMesh(vertexPositions, vertexNormals, vertexUVs, vertexTangents, vertexIndices);
+			EditMesh editMesh = new EditMesh();
+			editMesh.vertexPositions = vertexPositions;
+			editMesh.vertexNormals = vertexNormals;
+			editMesh.vertexUVs = vertexUVs;
+			editMesh.vertexTangents = vertexTangents;
+			editMesh.vertexIndices = vertexIndices;
+			
+			return editMesh;
 		}
 		public static EditMesh CreateCylinderAlongCurve(Math.Curve3DFunction curve, float radius, int segmentCount, int ringVertexCount, float startT, float endT)
 		{
@@ -496,6 +539,7 @@ namespace Wraithguard
 		public Vector3[] vertexNormals;
 		public Vector2[] vertexUVs;
 		public Vector4[] vertexTangents;
+		public BoneWeight[] vertexBoneWeights;
 		public int[] vertexIndices;
 		
 		public int vertexCount
@@ -513,24 +557,13 @@ namespace Wraithguard
 			}
 		}
 		
-		public EditMesh()
-		{
-		}
-		public EditMesh(Vector3[] vertexPositions, Vector3[] vertexNormals, Vector2[] vertexUVs, Vector4[] vertexTangents, int[] vertexIndices)
-		{
-			this.vertexPositions = vertexPositions;
-			this.vertexNormals = vertexNormals;
-			this.vertexUVs = vertexUVs;
-			this.vertexTangents = vertexTangents;
-			this.vertexIndices = vertexIndices;
-		}
-		
 		public void Append(EditMesh editMesh)
 		{
 			Debug.Assert(vertexPositions != null);
 			Debug.Assert(vertexNormals == null || editMesh.vertexNormals != null);
 			Debug.Assert(vertexUVs == null || editMesh.vertexUVs != null);
 			Debug.Assert(vertexTangents == null || editMesh.vertexTangents != null);
+			Debug.Assert(vertexBoneWeights == null || editMesh.vertexBoneWeights != null);
 			Debug.Assert(vertexIndices != null);
 			
 			int oldVertexCount = vertexCount;
@@ -553,6 +586,11 @@ namespace Wraithguard
 				Utilities.Append(ref vertexTangents, editMesh.vertexTangents);
 			}
 			
+			if(vertexBoneWeights != null)
+			{
+				Utilities.Append(ref vertexBoneWeights, editMesh.vertexBoneWeights);
+			}
+			
 			Utilities.Append(ref vertexIndices, editMesh.vertexIndices);
 			
 			for(int vertexIndexIndex = oldVertexIndexCount; vertexIndexIndex < vertexIndices.Length; vertexIndexIndex++)
@@ -567,6 +605,26 @@ namespace Wraithguard
 			{
 				vertexPositions[vertexIndex] += translation;
 			}
+		}
+		
+		public List<int> GetVerticesInSphere(Vector3 spherePosition, float sphereRadius)
+		{
+			Debug.Assert(sphereRadius > 0);
+
+			float radiusSquared = sphereRadius * sphereRadius;
+			List<int> verticesInSphere = new List<int>();
+			
+			for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
+			{
+				float distanceSquared = (vertexPositions[vertexIndex] - spherePosition).sqrMagnitude;
+
+				if(distanceSquared <= radiusSquared)
+				{
+					verticesInSphere.Add(vertexIndex);
+				}
+			}
+			
+			return verticesInSphere;
 		}
 		
 		public Bounds ComputeBounds()
@@ -601,6 +659,7 @@ namespace Wraithguard
 			mesh.normals = vertexNormals;
 			mesh.uv = vertexUVs;
 			mesh.tangents = vertexTangents;
+			mesh.boneWeights = vertexBoneWeights;
 			mesh.triangles = vertexIndices;
 			
 			return mesh;

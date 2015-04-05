@@ -72,6 +72,7 @@ namespace Wraithguard
 		
 		public static void GetPolylinePlaneNormalsAndPerpendicularVectors(Vector3[] polylineVertices, out Vector3[] planeNormals, out Vector3[] perpendicularVectors)
 		{
+			
 			planeNormals = new Vector3[polylineVertices.Length];
 			perpendicularVectors = new Vector3[polylineVertices.Length];
 			
@@ -96,23 +97,42 @@ namespace Wraithguard
 				}
 				
 				planeNormal.Normalize();
-				
 				planeNormals[vertexIndex] = planeNormal;
 				
-				// Find the perpendicular vector.
-				if(!AreParallel(planeNormal, Vector3.up))
+				// Find the perpendicular vector (always along the XZ plane).
+				if(vertexIndex == 0)
 				{
-					perpendicularVectors[vertexIndex] = Vector3.Cross(Vector3.up, planeNormal).normalized;
-				}
-				else
-				{
-					if(vertexIndex == 0)
+					if(!AreParallel(planeNormal, Vector3.up))
 					{
-						perpendicularVectors[vertexIndex] = Vector3.right;
+						perpendicularVectors[vertexIndex] = Vector3.Cross(Vector3.up, planeNormal).normalized;
 					}
 					else
 					{
+						perpendicularVectors[vertexIndex] = Vector3.right;
+					}
+				}
+				else
+				{
+					Vector3 previousPlaneNormal = planeNormals[vertexIndex - 1];
+					float planeNormalsAngle = Vector3.Angle(planeNormal, previousPlaneNormal);
+					
+					if(Mathf.Approximately(planeNormalsAngle, 0) || Mathf.Approximately(planeNormalsAngle, 180))
+					{
 						perpendicularVectors[vertexIndex] = perpendicularVectors[vertexIndex - 1];
+					}
+					else
+					{
+						Vector3 planeNormalsRotationAxis = Vector3.Cross(previousPlaneNormal, planeNormal).normalized;
+						Vector3 unprojectedPerpendicularVector = Quaternion.AngleAxis(planeNormalsAngle, planeNormalsRotationAxis) * perpendicularVectors[vertexIndex - 1];
+						
+						if(!AreParallel(unprojectedPerpendicularVector, Vector3.up))
+						{
+							perpendicularVectors[vertexIndex] = Vector3.ProjectOnPlane(unprojectedPerpendicularVector, Vector3.up).normalized;
+						}
+						else
+						{
+							perpendicularVectors[vertexIndex] = perpendicularVectors[vertexIndex - 1];
+						}
 					}
 				}
 			}
@@ -127,7 +147,7 @@ namespace Wraithguard
 			return a + (t * (b - a));
 		}
 		
-		public static float MassSpringDamperFunction(float m, float k, float c, float x0, float dx0, float t)
+		public static float MassSpringDamper(float m, float k, float c, float x0, float dx0, float t)
 		{
 			float w0 = Mathf.Sqrt(k / m);
 			float zeta = c / (2 * Mathf.Sqrt(m * k));
@@ -154,6 +174,31 @@ namespace Wraithguard
 				Debug.Assert(false); // hanven't implemented this yet
 				return 0;
 			}
+		}
+		
+		public static Vector3 Superellipse(float n, float a, float b, float t)
+		{
+			float twoOverN = 2 / n;
+			float cosT = Mathf.Cos(t);
+			float sinT = Mathf.Sin(t);
+			
+			float x = a * Mathf.Pow(Mathf.Abs(cosT), twoOverN) * Mathf.Sign(cosT);
+			float y = b * Mathf.Pow(Mathf.Abs(sinT), twoOverN) * Mathf.Sign(sinT);
+			
+			return new Vector3(x, y, 0);
+		}
+		
+		public static Matrix4x4 GetLocalTransformationMatrix(Transform transform)
+		{
+			Matrix4x4 localTransformationMatrix = new Matrix4x4();
+			localTransformationMatrix.SetTRS(transform.localPosition, transform.localRotation, transform.localScale);
+			
+			return localTransformationMatrix;
+		}
+		
+		public static Matrix4x4 GetBindPoseMatrix(Transform boneTransform, Transform meshTransform)
+		{
+			return boneTransform.worldToLocalMatrix * meshTransform.localToWorldMatrix;
 		}
 	}
 }
