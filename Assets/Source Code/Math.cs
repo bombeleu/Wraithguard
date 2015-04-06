@@ -200,5 +200,68 @@ namespace Wraithguard
 		{
 			return boneTransform.worldToLocalMatrix * meshTransform.localToWorldMatrix;
 		}
+		
+		// Calculates angle A in a triangle with lengths a, b, and c (lengths are opposite of their respective angles).
+		public static float GetAngleALawOfCosines(float a, float b, float c)
+		{
+			float a2 = a * a;
+			float b2 = b * b;
+			float c2 = c * c;
+			
+			return Mathf.Acos((-a2 + b2 + c2) / (2 * b * c));
+		}
+		
+		public static bool Solve2BoneIK(float parentBoneLength, float childBoneLength, float distanceToTarget, out float parentAngle, out float relativeChildAngle)
+		{
+			Debug.Assert(parentBoneLength > 0);
+			Debug.Assert(childBoneLength > 0);
+			Debug.Assert(distanceToTarget >= 0);
+			
+			float minArmReach = Mathf.Abs(parentBoneLength - childBoneLength);
+			float maxArmReach = parentBoneLength + childBoneLength;
+			
+			if(Mathf.Approximately(distanceToTarget, 0) || distanceToTarget < minArmReach)
+			{
+				parentAngle = 0;
+				relativeChildAngle = pi;
+				
+				return false;
+			}
+			else if(distanceToTarget > maxArmReach)
+			{
+				parentAngle = 0;
+				relativeChildAngle = 0;
+				
+				return false;
+			}
+			else
+			{
+				float PL2 = parentBoneLength * parentBoneLength;
+				float CL2 = childBoneLength * childBoneLength;
+				float D2 = distanceToTarget * distanceToTarget;
+				
+				parentAngle = GetAngleALawOfCosines(childBoneLength, parentBoneLength, distanceToTarget);
+				relativeChildAngle = GetAngleALawOfCosines(distanceToTarget, childBoneLength, parentBoneLength) - pi;
+				
+				return true;
+			}
+		}
+		public static bool Solve2BoneIK(float parentBoneLength, float childBoneLength, Vector3 targetDisplacement, out Quaternion parentOrientation, out Quaternion relativeChildOrientation, float rollAngle = 0)
+		{
+			Vector3 targetDisplacementXZ = Vector3.ProjectOnPlane(targetDisplacement, Vector3.up);
+			Vector2 targetDisplacement2D = new Vector2(targetDisplacementXZ.magnitude, targetDisplacement.y);
+			float baseAngle = Mathf.Atan2(targetDisplacement2D.y, targetDisplacement2D.x);
+			float yAngle = Mathf.Atan2(targetDisplacementXZ.z, targetDisplacementXZ.x);
+			
+			float angle0, angle1;
+			bool reachedTarget = Math.Solve2BoneIK(parentBoneLength, childBoneLength, targetDisplacement.magnitude, out angle0, out angle1);
+			
+			angle0 += baseAngle;
+			
+			parentOrientation = Quaternion.AngleAxis(rollAngle * Mathf.Rad2Deg, targetDisplacement) * Quaternion.AngleAxis(-yAngle * Mathf.Rad2Deg, Vector3.up) * Quaternion.AngleAxis(angle0 * Mathf.Rad2Deg, Vector3.forward);
+			relativeChildOrientation = Quaternion.AngleAxis(angle1 * Mathf.Rad2Deg, Vector3.forward);
+			
+			return reachedTarget;
+		}
 	}
 }

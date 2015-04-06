@@ -83,8 +83,6 @@ namespace Wraithguard
 			renderer.sharedMesh = mesh;
 			renderer.bones = bones;
 			
-			transform.position = Vector3.forward * 5;
-			
 			Animation animation = gameObject.AddComponent<Animation>();
 			
 			AnimationCurve curve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, -0.5f), new Keyframe(1.05f, 0), new Keyframe(2, 0));

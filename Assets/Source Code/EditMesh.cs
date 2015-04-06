@@ -607,6 +607,14 @@ namespace Wraithguard
 			}
 		}
 		
+		public void Rotate(Quaternion rotation)
+		{
+			for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
+			{
+				vertexPositions[vertexIndex] = rotation * vertexPositions[vertexIndex];
+			}
+		}
+		
 		public List<int> GetVerticesInSphere(Vector3 spherePosition, float sphereRadius)
 		{
 			Debug.Assert(sphereRadius > 0);
