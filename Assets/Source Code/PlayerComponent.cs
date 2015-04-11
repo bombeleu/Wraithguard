@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using CUF;
+using Debug = CUF.Debug;
 
 namespace Wraithguard
 {
@@ -7,7 +9,7 @@ namespace Wraithguard
 		GameObject sword;
 		
 		#region Camera Stuff
-		public GameObject camera
+		public new GameObject camera
 		{
 			get
 			{
@@ -68,7 +70,7 @@ namespace Wraithguard
 		private const float jumpImpulseMagnitude = 350;
 		#endregion
 		
-		private Rigidbody rigidbody;
+		private new Rigidbody rigidbody;
 		private float yAngle;
 		
 		public float height;

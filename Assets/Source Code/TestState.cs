@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
+using CUF;
+using Debug = CUF.Debug;
 
 namespace Wraithguard
 {
 	public class TestState : GameState
 	{
-		private const float armLength0 = 1.25f;
-		private const float armLength1 = armLength0 * Measures.averageHumanUpperArmLowerArmLengthRatio;
+		private const float armLength0 = Measures.averageMaleHumanHeight * Measures.averageHumanUpperArmLengthPercentageOfHeight;
+		private const float armLength1 = Measures.averageMaleHumanHeight * Measures.averageHumanForearmLengthPercentageOfHeight;
 		private GameObject[] armSegments;
 		private GameObject bow;
 		private GameObject bowStringBone;
 		
 		public override void OnStart()
 		{
-			Global.CreateCamera().transform.position = new Vector3(0, 0, -3);
+			Framework.CreateCamera().transform.position = new Vector3(0, 0, -3);
 			
 			armSegments = CreateArm(0.1f, armLength0, armLength1);
 			armSegments[0].name = "arm";
@@ -25,7 +27,7 @@ namespace Wraithguard
 		{
 			if(Input.GetKeyDown(KeyCode.Escape))
 			{
-				Global.ClearSceneAndChangeGameState(new MainMenuState());
+				Framework.ClearSceneAndChangeGameState(new MainMenuState());
 			}
 			
 			Transform bowStringBoneTransform = bow.transform.Find("skeletonRoot/string");

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using Wraithguard;
 
-namespace Wraithguard
+namespace CUF
 {
 	public class FlyingCameraComponent : MonoBehaviour
 	{

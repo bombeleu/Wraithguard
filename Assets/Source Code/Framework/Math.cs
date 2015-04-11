@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Wraithguard
+namespace CUF
 {
 	public static class Math
 	{
@@ -11,6 +11,20 @@ namespace Wraithguard
 		public const float twoPi = 6.28318530718f;
 		public const float piOverTwo = 1.57079632679f;
 		public const float e = 2.718281828459045f;
+		
+		public static float Mean(params float[] numbers)
+		{
+			Debug.Assert(numbers.Length > 0);
+			
+			float sum = 0;
+			
+			foreach(float number in numbers)
+			{
+				sum += number;
+			}
+			
+			return sum / numbers.Length;
+		}
 		
 		public static Vector3 Reject(Vector3 a, Vector3 b)
 		{
@@ -236,10 +250,6 @@ namespace Wraithguard
 			}
 			else
 			{
-				float PL2 = parentBoneLength * parentBoneLength;
-				float CL2 = childBoneLength * childBoneLength;
-				float D2 = distanceToTarget * distanceToTarget;
-				
 				parentAngle = GetAngleALawOfCosines(childBoneLength, parentBoneLength, distanceToTarget);
 				relativeChildAngle = GetAngleALawOfCosines(distanceToTarget, childBoneLength, parentBoneLength) - pi;
 				

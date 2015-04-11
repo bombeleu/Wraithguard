@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Wraithguard
+namespace CUF
 {
 	public static class Mouse
 	{

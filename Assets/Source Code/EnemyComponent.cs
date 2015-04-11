@@ -4,7 +4,7 @@ namespace Wraithguard
 {
 	public class EnemyComponent : MonoBehaviour
 	{
-		private Rigidbody rigidbody;
+		private new Rigidbody rigidbody;
 		private GameObject target;
 		
 		private const float wanderDirectionChangeCooldown = 1;

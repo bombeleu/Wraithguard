@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Wraithguard
+namespace CUF
 {
 	public class EditMesh
 	{
@@ -535,6 +535,38 @@ namespace Wraithguard
 			return CreateCylinderAlongPolyline(polylineVertices, radius, ringVertexCount);
 		}
 		
+		public static void SaveAsOBJ(EditMesh editMesh, string filename)
+		{
+			const int maxFloatDecimalPlaces = 6;
+			
+			using(System.IO.StreamWriter file = new System.IO.StreamWriter(filename))
+			{
+				foreach(Vector3 vertexPosition in editMesh.vertexPositions)
+				{
+					file.Write("v ");
+					file.Write(System.Math.Round(vertexPosition.x, maxFloatDecimalPlaces));
+					file.Write(' ');
+					file.Write(System.Math.Round(vertexPosition.y, maxFloatDecimalPlaces));
+					file.Write(' ');
+					file.Write(System.Math.Round(vertexPosition.z, maxFloatDecimalPlaces));
+					file.WriteLine();
+				}
+				
+				for(int triangleIndex = 0; triangleIndex < editMesh.triangleCount; triangleIndex++)
+				{
+					int baseIndexIndex = triangleIndex * 3;
+					
+					file.Write("f ");
+					file.Write(editMesh.vertexIndices[baseIndexIndex] + 1);
+					file.Write(' ');
+					file.Write(editMesh.vertexIndices[baseIndexIndex + 1] + 1);
+					file.Write(' ');
+					file.Write(editMesh.vertexIndices[baseIndexIndex + 2] + 1);
+					file.WriteLine();
+				}
+			}
+		}
+		
 		public Vector3[] vertexPositions;
 		public Vector3[] vertexNormals;
 		public Vector2[] vertexUVs;
@@ -642,7 +674,7 @@ namespace Wraithguard
 			foreach(Vector3 vertexPosition in vertexPositions)
 			{
 				bounds.min = Vector3.Min(bounds.min, vertexPosition);
-				bounds.min = Vector3.Max(bounds.min, vertexPosition);
+				bounds.max = Vector3.Max(bounds.max, vertexPosition);
 			}
 			
 			return bounds;

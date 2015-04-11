@@ -1,4 +1,4 @@
-﻿namespace Wraithguard
+﻿namespace CUF
 {
 	public static class Debug
 	{

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Debug = CUF.Debug;
 
 namespace Wraithguard
 {

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using CUF;
 
 namespace Wraithguard
 {
@@ -6,7 +7,7 @@ namespace Wraithguard
 	{
 		public override void OnStart()
 		{
-			Global.CreateCamera();
+			Framework.CreateCamera();
 			
 			Mesh mesh = EditMesh.CreateTorus(0.5f, 0.1f, 32, 16).ToMesh();
 			
@@ -20,7 +21,7 @@ namespace Wraithguard
 		{
 			if(Input.GetKeyDown(KeyCode.Escape))
 			{
-				Global.ClearSceneAndChangeGameState(new MainMenuState());
+				Framework.ClearSceneAndChangeGameState(new MainMenuState());
 			}
 		}
 	}

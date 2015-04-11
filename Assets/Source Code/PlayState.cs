@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using CUF;
 
 namespace Wraithguard
 {
@@ -14,7 +15,7 @@ namespace Wraithguard
 			
 			delegate()
 			{
-				Global.ClearSceneAndChangeGameState(new MainMenuState());
+				Framework.ClearSceneAndChangeGameState(new MainMenuState());
 			});
 			
 			console = new Console(OnCommandEntered);
@@ -27,7 +28,7 @@ namespace Wraithguard
 			LoadScene();
 			CreatePlayer();
 			
-			camera = Global.CreateCamera();
+			camera = Framework.CreateCamera();
 			
 			player.GetComponent<PlayerComponent>().camera = camera;
 			
@@ -97,7 +98,7 @@ namespace Wraithguard
 		}
 		private void LoadScene()
 		{
-			Global.CreateDirectionalLight().transform.eulerAngles = new Vector3(45, 45, 0);
+			Framework.CreateDirectionalLight().transform.eulerAngles = new Vector3(45, 45, 0);
 			
 			CreateTerrain();
 			
@@ -247,7 +248,7 @@ namespace Wraithguard
 		{
 			if(command == "quit")
 			{
-				Global.ClearSceneAndChangeGameState(new MainMenuState());
+				Framework.ClearSceneAndChangeGameState(new MainMenuState());
 			}
 		}
 		private void DrawCrosshair()

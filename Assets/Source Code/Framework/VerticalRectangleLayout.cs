@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Wraithguard
+namespace CUF
 {
 	public class VerticalRectangleLayout
 	{

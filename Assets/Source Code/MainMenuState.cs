@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using CUF;
 
 namespace Wraithguard
 {
@@ -14,23 +15,23 @@ namespace Wraithguard
 		}
 		public override void OnStart()
 		{
-			Global.CreateCamera();
+			Framework.CreateCamera();
 		}
 		public override void OnGUI()
 		{
 			if(GUI.Button(buttonLayout.rectangles[0], "Play"))
 			{
-				Global.ClearSceneAndChangeGameState(new PlayState());
+				Framework.ClearSceneAndChangeGameState(new PlayState());
 			}
 			
 			if(GUI.Button(buttonLayout.rectangles[1], "Editor"))
 			{
-				Global.ClearSceneAndChangeGameState(new EditorState());
+				Framework.ClearSceneAndChangeGameState(new EditorState());
 			}
 			
 			if(GUI.Button(buttonLayout.rectangles[2], "Test"))
 			{
-				Global.ClearSceneAndChangeGameState(new TestState());
+				Framework.ClearSceneAndChangeGameState(new TestState());
 			}
 			
 			if(GUI.Button(buttonLayout.rectangles[3], "Quit"))
